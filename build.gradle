@@ -24,6 +24,7 @@ apply plugin: 'license'
 apply plugin: 'maven-publish'
 apply plugin: 'project-report'
 apply plugin: 'versions'
+apply plugin: 'fpm-packaging'
 
 buildscript {
   repositories {
@@ -33,6 +34,7 @@ buildscript {
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.4'
     classpath 'com.github.goldin.plugins.gradle:about:0.3.1'
     classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.7.0'
+    classpath 'com.kenshoo:gradle-fpm:0.4'
   }
 }
 
@@ -364,3 +366,20 @@ task FlagSchemaChanges(type: Test) {
     args = ['src/test/sh/org/apache/aurora/verify_thrift_checksum.sh']
   }
 }
+
+packaging {
+  dependencies = ['java7-runtime-headless']
+
+  baseDir = "$buildDir/install/$applicationName"
+
+  prefix = "/usr/lib/$applicationName"
+
+  filesArgs = [
+    "./",
+  ]
+  extraOptions = [
+    "--exclude": "**/*.bat",
+  ]
+  force = true
+}
+tasks.create(name: "distDeb", dependsOn: ["installApp"], type:  com.kenshoo.watership.DebianTask)
