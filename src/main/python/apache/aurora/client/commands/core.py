@@ -375,18 +375,35 @@ def list_jobs(cluster_and_role):
 @app.command_option(OPEN_BROWSER_OPTION)
 @app.command_option(SHARDS_OPTION)
 def kill(args, options):
-  """usage: kill cluster/role/env/job
+  """usage: kill --shards=shardspec cluster/role/env/job
 
-  Kills a running job, blocking until all tasks have terminated.
+  Kills a group of tasks in a running job, blocking until all specified tasks have terminated.
 
-  Default behaviour is to kill all shards in the job, but the kill
-  can be limited to specific shards with the --shards option
   """
+  if options.shards is None:
+    print('Shards option is required for kill; use killall to kill all shards', file=sys.stderr)
+    exit(1)
   api, job_key, config_file = LiveJobDisambiguator.disambiguate_args_or_die(
       args, options, make_client_factory())
   options = app.get_options()
   config = get_job_config(job_key.to_path(), config_file, options) if config_file else None
   resp = api.kill_job(job_key, options.shards, config=config)
+  check_and_log_response(resp)
+  handle_open(api.scheduler_proxy.scheduler_client().url, job_key.role, job_key.env, job_key.name)
+
+@app.command
+@app.command_option(CLUSTER_INVOKE_OPTION)
+@app.command_option(OPEN_BROWSER_OPTION)
+def killall(args, options):
+  """usage: killall cluster/role/env/job
+  Kills all tasks in a running job, blocking until all specified tasks have been terminated.
+  """
+
+  job_key = AuroraJobKey.from_path(args[0])
+  config_file = args[1] if len(args) > 1 else None  # the config for hooks
+  config = get_job_config(job_key.to_path(), config_file, options) if config_file else None
+  api = make_client(job_key.cluster)
+  resp = api.kill_job(job_key, None, config=config)
   check_and_log_response(resp)
   handle_open(api.scheduler_proxy.scheduler_client().url, job_key.role, job_key.env, job_key.name)
 
@@ -419,8 +436,9 @@ def status(args, options):
                                           ScheduleStatus._VALUES_TO_NAMES[event.status],
                                           event.message)
     taskString += '\n\tpackages:'
-    for pkg in assigned_task.task.packages:
-      taskString += ('\n\t\trole: %s, package: %s, version: %s' % (pkg.role, pkg.name, pkg.version))
+    if assigned_task.task.packagesDEPRECATED is not None:
+      for pkg in assigned_task.task.packagesDEPRECATED:
+        taskString += ('\n\t\trole: %s, package: %s, version: %s' % (pkg.role, pkg.name, pkg.version))
 
     return taskString
 
@@ -436,8 +454,9 @@ def status(args, options):
               ScheduleStatus._VALUES_TO_NAMES[task.status],
               task.assignedTask.slaveHost,
               taskString))
-      for pkg in task.assignedTask.task.packages:
-        log.info('\tpackage %s/%s/%s' % (pkg.role, pkg.name, pkg.version))
+      if task.assignedTask.task.packagesDEPRECATED is not None:
+        for pkg in task.assignedTask.task.packagesDEPRECATED:
+          log.info('\tpackage %s/%s/%s' % (pkg.role, pkg.name, pkg.version))
 
   api, job_key, _ = LiveJobDisambiguator.disambiguate_args_or_die(
       args, options, make_client_factory())
