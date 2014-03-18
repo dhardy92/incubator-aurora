@@ -380,7 +380,7 @@ packaging {
   extraOptions = [
     "--name": "$applicationName",
     "--exclude": "**/*.bat",
-    "--directories": "/var/lib/$applicationName",
+    "--directories": "/var/lib/$applicationName /var/log/$applicationName",
     "--post-install": "${rootProject.projectDir}/packaging/postinstall",
     "--post-uninstall": "${rootProject.projectDir}/packaging/postuninstall",
     "--pre-uninstall": "${rootProject.projectDir}/packaging/preuninstall",

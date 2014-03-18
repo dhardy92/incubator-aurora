@@ -31,8 +31,9 @@ CLUSTER_NAME=${CLUSTER_NAME:-$NAME}
 THERMOS_EXECUTOR_PATH=${THERMOS_EXECUTOR_PATH:-/dev/null}
 BACKUP_DIR=${BACKUP_DIR:-$DATA_DIR/backups}
 ZK_ENDPOINTS=${ZK_ENDPOINTS:-localhost:2181}
+LOG_DIR=${LOG_DIR:-/var/log/$NAME}
 
-DAEMON_ARGS="-cluster_name $CLUSTER_NAME -mesos_master_address $MESOS_MASTER -backup_dir $BACKUP_DIR -serverset_path $SERVERSET_PATH -thermos_executor_path $THERMOS_EXECUTOR_PATH -zk_endpoints $ZK_ENDPOINTS $DAEMONS_ARGS"
+DAEMON_ARGS="-log_dir $LOG_DIR -cluster_name $CLUSTER_NAME -mesos_master_address $MESOS_MASTER -backup_dir $BACKUP_DIR -serverset_path $SERVERSET_PATH -thermos_executor_path $THERMOS_EXECUTOR_PATH -zk_endpoints $ZK_ENDPOINTS $DAEMONS_ARGS"
 
 # If ulimit nofiles was set in $DEFAULT,
 # then change the limit for this process now.
