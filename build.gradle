@@ -378,6 +378,7 @@ packaging {
     "./",
   ]
   extraOptions = [
+    "--name": "$applicationName",
     "--exclude": "**/*.bat",
   ]
   force = true
