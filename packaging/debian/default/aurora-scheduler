@@ -1,0 +1,8 @@
+#CONFIG_DIR=/etc/aurora-scheduler
+#LIB_DIR=/usr/lib/aurora-scheduler/lib
+#BIN_DIR=/usr/lib/aurora-scheduler/bin
+MESOS_MASTER=localhost:5050
+SERVERSET_PATH=/aurora/scheduler
+CLUSTER_NAME=AURORA_0
+THERMOS_EXECUTOR_PATH=/dev/null
+BACKUP_DIR=/var/lib/aurora-scheduler/backups

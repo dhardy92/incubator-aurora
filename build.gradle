@@ -380,6 +380,12 @@ packaging {
   extraOptions = [
     "--name": "$applicationName",
     "--exclude": "**/*.bat",
+    "--directories": "/var/lib/$applicationName",
+    "--post-install": "${rootProject.projectDir}/packaging/postinstall",
+    "--post-uninstall": "${rootProject.projectDir}/packaging/postuninstall",
+    "--pre-uninstall": "${rootProject.projectDir}/packaging/preuninstall",
+    "--deb-init": "${rootProject.projectDir}/packaging/debian/init.d/$applicationName",
+    "--deb-default": "${rootProject.projectDir}/packaging/debian/default/$applicationName",
   ]
   force = true
 }

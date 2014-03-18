@@ -1,0 +1,24 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    configure)
+
+[ -f /etc/default/aurora-scheduler ] && . /etc/default/aurora-scheduler
+[ -z "$AURORA_USER" ] && AURORA_USER="aurora"
+[ -z "$AURORA_GROUP" ] && AURORA_GROUP="aurora"
+if ! getent group "$AURORA_GROUP" > /dev/null 2>&1 ; then
+addgroup --system "$AURORA_GROUP" --quiet
+fi
+if ! id $AURORA_USER > /dev/null 2>&1 ; then
+adduser --system --home /usr/lib/aurora-scheduler --no-create-home \
+--ingroup "$AURORA_GROUP" --disabled-password --shell /bin/false \
+"$AURORA_USER"
+fi
+
+# Set user permissions on /var/log/aurora-scheduler and /usr/lib/aurora-scheduler
+mkdir -p /var/log/aurora-scheduler /usr/lib/aurora-scheduler /var/lib/aurora-scheduler
+chown -R $AURORA_USER:$AURORA_GROUP /var/log/aurora-scheduler /usr/lib/aurora-scheduler /var/lib/aurora-scheduler
+chmod 755 /var/log/aurora-scheduler /usr/lib/aurora-scheduler
+
+esac
