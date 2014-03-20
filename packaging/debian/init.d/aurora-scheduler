@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env bash
 ### BEGIN INIT INFO
 # Provides:          aurora-scheduler
 # Required-Start:    $remote_fs $syslog
@@ -32,8 +32,10 @@ THERMOS_EXECUTOR_PATH=${THERMOS_EXECUTOR_PATH:-/dev/null}
 BACKUP_DIR=${BACKUP_DIR:-$DATA_DIR/backups}
 ZK_ENDPOINTS=${ZK_ENDPOINTS:-localhost:2181}
 LOG_DIR=${LOG_DIR:-/var/log/$NAME}
+HTTP_PORT=${HTTP_PORT:-8081}
+THRIFT_PORT=${THRIFT_PORT:-8082}
 
-DAEMON_ARGS="-log_dir $LOG_DIR -cluster_name $CLUSTER_NAME -mesos_master_address $MESOS_MASTER -backup_dir $BACKUP_DIR -serverset_path $SERVERSET_PATH -thermos_executor_path $THERMOS_EXECUTOR_PATH -zk_endpoints $ZK_ENDPOINTS $DAEMONS_ARGS"
+DAEMON_ARGS="-log_dir $LOG_DIR -cluster_name $CLUSTER_NAME -mesos_master_address $MESOS_MASTER -backup_dir $BACKUP_DIR -serverset_path $SERVERSET_PATH -thermos_executor_path $THERMOS_EXECUTOR_PATH -zk_endpoints $ZK_ENDPOINTS -http_port $HTTP_PORT -thrift_port $THRIFT_PORT $DAEMON_ARGS"
 
 # If ulimit nofiles was set in $DEFAULT,
 # then change the limit for this process now.
