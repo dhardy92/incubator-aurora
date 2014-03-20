@@ -1,8 +1,13 @@
 #CONFIG_DIR=/etc/aurora-scheduler
 #LIB_DIR=/usr/lib/aurora-scheduler/lib
 #BIN_DIR=/usr/lib/aurora-scheduler/bin
-MESOS_MASTER=localhost:5050
+MESOS_MASTER=zk://localhost:2181/mesos/master
 SERVERSET_PATH=/aurora/scheduler
-CLUSTER_NAME=AURORA_0
+CLUSTER_NAME=example
 THERMOS_EXECUTOR_PATH=/dev/null
 BACKUP_DIR=/var/lib/aurora-scheduler/backups
+ZK_ENDPOINTS=localhost:2181
+HTTP_PORT=8081
+THRIFT_PORT=8082
+DAEMON_ARGS="-native_log_quorum_size=1 -native_log_zk_group_path=/aurora/replicated-log -native_log_file_path=/var/lib/aurora-scheduler/db -gc_executor_path=/usr/local/bin/gc_executor -vlog=INFO -logtostderr"
+export JAVA_OPTS="-server -Xmx1g -Xms1g -Djava.library.path=/usr/lib"
